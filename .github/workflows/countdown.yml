@@ -18,8 +18,8 @@ jobs:
               env:
                   BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
                   CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-                  START_DATE: ${{ secrets.TELEGRAM_START_DATE }}
-                  TARGET_DATE: ${{ secrets.TELEGRAM_TARGET_DATE }}
+                  START_DATE: "2026-11-04"
+                  TARGET_DATE: "2026-12-12"
               run: |
                   chmod +x ./convert-and-upload.sh
                   ./convert-and-upload.sh
