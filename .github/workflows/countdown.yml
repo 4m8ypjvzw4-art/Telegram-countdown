@@ -2,7 +2,7 @@ name: Update Telegram Countdown + Photo
 
 on:
     schedule:
-        - cron: "0 21 * * *" # midnight UTC+8
+           - cron: "0 21 * * *" # midnight Moscow (UTC+3)
     workflow_dispatch:
 jobs:
     update:
