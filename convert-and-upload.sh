@@ -5,23 +5,27 @@ IMG="banner.jpg"
 OUT="output.jpg"
 
 # Progress calculation
-TODAY=$(TZ=Asia/Taipei date +%s)
-START_TIMESTAMP=$(date -d "$START_DATE" +%s)
-TARGET_TIMESTAMP=$(date -d "$TARGET_DATE" +%s)
+
+TODAY=$(TZ=Europe/Moscow date -d "$(TZ=Europe/Moscow date +%F)" +%s)
+START_TIMESTAMP=$(TZ=Europe/Moscow date -d "$START_DATE" +%s)
+TARGET_TIMESTAMP=$(TZ=Europe/Moscow date -d "$TARGET_DATE" +%s)
 
 TOTAL=$(( (TARGET_TIMESTAMP - START_TIMESTAMP) / 86400 ))
+
 LEFT=$(( (TARGET_TIMESTAMP - TODAY) / 86400 ))
-DAYS_DONE=$(( TOTAL - LEFT ))
-PERCENT=$(( 100 * DAYS_DONE / TOTAL ))
+
 
 if [ "$TOTAL" -le 0 ]; then
   echo "ERROR: Invalid date range"
   exit 1
 fi
 
+if [ "$LEFT" -lt 0 ]; then LEFT=0; fi
+if [ "$LEFT" -gt "$TOTAL" ]; then LEFT=$TOTAL; fi
+
+DAYS_DONE=$(( TOTAL - LEFT ))
 PERCENT=$(( 100 * DAYS_DONE / TOTAL ))
-if [ "$PERCENT" -gt 100 ]; then PERCENT=100; fi
-if [ "$PERCENT" -lt 0 ]; then PERCENT=0; fi
+
 
 echo "Progress: $DAYS_DONE/$TOTAL days ($PERCENT%)"
 
@@ -43,13 +47,13 @@ convert "$IMG" \
 
 convert top.jpg bottom.jpg -append "$OUT"
 
-TITLE="SITCON 2026 工人大群 | 倒數 $LEFT 天"
+TITLE="12.12.26 Концерт — $LEFT дней"
 
 curl -s -X POST https://api.telegram.org/bot$BOT_TOKEN/setChatTitle \
   -d chat_id=$CHAT_ID \
   -d title="$TITLE"
 
-# Upload
-curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/setChatPhoto" \
-  -F chat_id="$CHAT_ID" \
-  -F photo=@"$OUT"
+# # Upload
+# curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/setChatPhoto" \
+#  -F chat_id="$CHAT_ID" \
+#  -F photo=@"$OUT"
