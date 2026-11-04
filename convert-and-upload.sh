@@ -47,7 +47,15 @@ convert "$IMG" \
 
 convert top.jpg bottom.jpg -append "$OUT"
 
-TITLE="12.12.26 Концерт — $LEFT дней"
+if (( LEFT % 10 == 1 && LEFT % 100 != 11 )); then
+  WORD="день"
+elif (( LEFT % 10 >= 2 && LEFT % 10 <= 4 && (LEFT % 100 < 12 || LEFT % 100 > 14) )); then
+  WORD="дня"
+else
+  WORD="дней"
+fi
+
+TITLE="12.12.26 Концерт — $LEFT $WORD"
 
 curl -s -X POST https://api.telegram.org/bot$BOT_TOKEN/setChatTitle \
   -d chat_id=$CHAT_ID \
