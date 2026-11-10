@@ -60,6 +60,32 @@ TITLE="12.12.26 Концерт — $LEFT $WORD"
 curl -s -X POST https://api.telegram.org/bot$BOT_TOKEN/setChatTitle \
   -d chat_id=$CHAT_ID \
   -d title="$TITLE"
+  # Wait for Telegram to deliver the service message
+sleep 3
+
+# Find the service message for this title change
+UPDATES=$(curl -fsS --get \
+  "https://api.telegram.org/bot${BOT_TOKEN}/getUpdates" \
+  --data-urlencode 'timeout=0' \
+  --data-urlencode 'allowed_updates=["message"]')
+
+MESSAGE_ID=$(printf '%s' "$UPDATES" | jq -r \
+  --arg chat "$CHAT_ID" \
+  --arg title "$TITLE" '
+  [.result[]?.message
+   | select((.chat.id | tostring) == $chat)
+   | select(.new_chat_title == $title)
+   | .message_id] | last // empty')
+
+if [ -n "$MESSAGE_ID" ]; then
+  curl -fsS -X POST \
+    "https://api.telegram.org/bot${BOT_TOKEN}/deleteMessage" \
+    -d "chat_id=$CHAT_ID" \
+    -d "message_id=$MESSAGE_ID"
+  echo "Service message deleted: $MESSAGE_ID"
+else
+  echo "Service message not found"
+fi
 
 # # Upload
 # curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/setChatPhoto" \
