@@ -21,7 +21,7 @@ else
   WORD="дней"
 fi
 
-TEXT="📅 До 18 сентября 2027 года осталось: $DAYS $WORD"
+TEXT="📅 $DAYS $WORD - до 18.09.2027"
 
 API="https://api.telegram.org/bot${BOT_TOKEN}"
 
