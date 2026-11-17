@@ -1,0 +1,23 @@
+
+name: Countdown 2027 - Pinned Message
+
+on:
+  schedule:
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-pinned:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update pinned countdown
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID_2027 }}
+          MESSAGE_ID: ${{ secrets.TELEGRAM_MESSAGE_ID_2027 }}
+        run: |
+          bash ./pinned-countdown-2027.sh
